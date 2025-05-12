@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Resume</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="https://i.ibb.co/DGrKhr8/profile.png" class="profile">
+      <div>
+        <h1>{{ data.name }}</h1>
+        <h3>{{ data.title }}</h3>
+        <p>📞 {{ data.phone }} | ✉️ {{ data.email }} | 🌐 {{ data.website }}</p>
+      </div>
+    </header>
+
+    <section>
+      <h2>About Me</h2>
+      <p>{{ data.about }}</p>
+    </section>
+
+    <section>
+      <h2>Education</h2>
+      <ul>
+        <li>{{ data.edu1 }}</li>
+        <li>{{ data.edu2 }}</li>
+        <li>{{ data.edu3 }}</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Experience</h2>
+      <ul>
+        <li>{{ data.exp1 }}</li>
+        <li>{{ data.exp2 }}</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Skills</h2>
+      <ul>
+        {% for skill in data.skills.split(',') %}
+          <li>{{ skill.strip() }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <section>
+      <h2>References</h2>
+      <p>{{ data.ref1 }}</p>
+      <p>{{ data.ref2 }}</p>
+    </section>
+
+    <form action="/download" method="POST">
+      {% for key, value in data.items() %}
+        <input type="hidden" name="{{ key }}" value="{{ value }}">
+      {% endfor %}
+      <button type="submit">Download PDF</button>
+    </form>
+  </div>
+</body>
+</html>
