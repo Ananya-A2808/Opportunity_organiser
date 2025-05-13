@@ -20,7 +20,7 @@
         header {
             text-align: center;
             margin-bottom: 30px;
-            border-bottom: 2px solid #000;
+            border-bottom: 2px solid #4b0082;
             padding-bottom: 20px;
         }
         .profile {
@@ -29,7 +29,7 @@
             border-radius: 50%;
             object-fit: cover;
             margin: 0 auto 20px;
-            border: 2px solid #000;
+            border: 2px solid #4b0082;
         }
         header h1 {
             margin: 0;
@@ -41,7 +41,7 @@
             margin: 10px 0;
             font-size: 1.3em;
             font-weight: normal;
-            color: #666;
+            color: #4b0082;
         }
         header p {
             margin: 5px 0;
@@ -53,7 +53,7 @@
         section h2 {
             font-size: 1.4em;
             text-transform: uppercase;
-            border-bottom: 1px solid #000;
+            border-bottom: 1px solid #4b0082;
             padding-bottom: 5px;
             margin-bottom: 15px;
         }
@@ -79,9 +79,11 @@
         }
         .skill-item {
             background: #f0f0f0;
+            color: #4b0082;
             padding: 4px 12px;
             border-radius: 3px;
             font-size: 0.9em;
+            border: 1px solid #4b0082;
         }
         .references {
             display: grid;
@@ -89,7 +91,7 @@
             gap: 15px;
         }
         .reference-item {
-            border-left: 2px solid #000;
+            border-left: 2px solid #4b0082;
             padding-left: 15px;
         }
         @media print {
@@ -139,6 +141,17 @@
             <ul>
                 {% if data.exp1 %}<li>{{ data.exp1 }}</li>{% endif %}
                 {% if data.exp2 %}<li>{{ data.exp2 }}</li>{% endif %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {% if data.proj1 or data.proj2 or data.proj3 %}
+        <section>
+            <h2>Key Projects</h2>
+            <ul>
+                {% if data.proj1 %}<li>{{ data.proj1 }}</li>{% endif %}
+                {% if data.proj2 %}<li>{{ data.proj2 }}</li>{% endif %}
+                {% if data.proj3 %}<li>{{ data.proj3 }}</li>{% endif %}
             </ul>
         </section>
         {% endif %}

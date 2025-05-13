@@ -7,8 +7,19 @@ from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.enum.text import PP_ALIGN
 from pptx.dml.color import RGBColor
+from openai import OpenAI
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv("./env")
 
 app = Flask(__name__)
+
+# Configure OpenAI client
+client = OpenAI(
+    base_url="https://models.inference.ai.azure.com",
+    api_key=""
+)
 
 # Configure upload folder
 UPLOAD_FOLDER = 'static/uploads'
@@ -25,6 +36,54 @@ config = pdfkit.configuration(
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def generate_role_suggestions(role):
+    try:
+        response = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a professional resume writer. Generate 3 different professional summaries for the given job role. Each summary should be 2-3 sentences long and highlight relevant skills and experience."
+                },
+                {
+                    "role": "user",
+                    "content": f"Generate professional summary for a {role} position."
+                }
+            ],
+            model="gpt-4o-mini",
+            temperature=0.7,
+            max_tokens=300,
+            top_p=1
+        )
+        suggestions = [choice.message.content.strip() for choice in response.choices]
+        return suggestions
+    except Exception as e:
+        print(f"Error generating role suggestions: {str(e)}")
+        return []
+
+def generate_skill_suggestions(role):
+    try:
+        response = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a professional resume writer. Generate 5-7 relevant technical and soft skills for the given job role. Format each skill as a single word or short phrase without numbering."
+                },
+                {
+                    "role": "user",
+                    "content": f"Generate relevant skills for a {role} position without numbering."
+                }
+            ],
+            model="gpt-4o-mini",
+            temperature=0.7,
+            max_tokens=200,
+            top_p=1
+        )
+        suggestions = [skill.strip() for skill in response.choices[0].message.content.split('\n') if skill.strip()]
+        return suggestions
+    except Exception as e:
+        print(f"Error generating skill suggestions: {str(e)}")
+        return []
 
 def create_presentation(data):
     prs = Presentation()
@@ -143,6 +202,20 @@ def form():
         
         return render_template(template, data=data)
     return render_template("form.html")
+
+@app.route("/get_role_suggestions", methods=["POST"])
+def get_role_suggestions():
+    data = request.get_json()
+    role = data.get('role', '')
+    suggestions = generate_role_suggestions(role)
+    return jsonify({"suggestions": suggestions})
+
+@app.route("/get_skill_suggestions", methods=["POST"])
+def get_skill_suggestions():
+    data = request.get_json()
+    role = data.get('role', '')
+    suggestions = generate_skill_suggestions(role)
+    return jsonify({"suggestions": suggestions})
 
 @app.route("/download", methods=["POST"])
 def download():
